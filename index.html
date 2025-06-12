@@ -55,23 +55,19 @@
 
     <label>From</label>
     <select id="from">
-      <option value="BTC">Bitcoin (BTC)</option>
-      <option value="ETH">Ethereum (ETH)</option>
-      <option value="USDT">Tether (USDT)</option>
-      <option value="BNB">Binance Coin (BNB)</option>
-      <option value="SOL">Solana (SOL)</option>
-      <option value="XRP">Ripple (XRP)</option>
+      <option value="bitcoin">Bitcoin (BTC)</option>
+      <option value="ethereum">Ethereum (ETH)</option>
+      <option value="tether">Tether (USDT)</option>
+      <option value="binancecoin">Binance Coin (BNB)</option>
+      <option value="solana">Solana (SOL)</option>
+      <option value="ripple">Ripple (XRP)</option>
     </select>
 
-    <label>To</label>
+    <label>To (Fiat Only)</label>
     <select id="to">
-      <option value="USD">US Dollar (USD)</option>
-      <option value="BTC">Bitcoin (BTC)</option>
-      <option value="ETH">Ethereum (ETH)</option>
-      <option value="USDT">Tether (USDT)</option>
-      <option value="BNB">Binance Coin (BNB)</option>
-      <option value="SOL">Solana (SOL)</option>
-      <option value="XRP">Ripple (XRP)</option>
+      <option value="usd">US Dollar (USD)</option>
+      <option value="eur">Euro (EUR)</option>
+      <option value="zmw">Zambian Kwacha (ZMW)</option>
     </select>
 
     <button onclick="convertCrypto()">Convert</button>
@@ -91,13 +87,20 @@
       }
 
       try {
-        const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${from.toLowerCase()}&vs_currencies=${to.toLowerCase()}`);
+        const url = `https://api.coingecko.com/api/v3/simple/price?ids=${from}&vs_currencies=${to}`;
+        const res = await fetch(url);
         const data = await res.json();
-        const rate = data[from.toLowerCase()][to.toLowerCase()];
+
+        if (!data[from] || !data[from][to]) {
+          result.innerText = "Conversion failed. Rate not found.";
+          return;
+        }
+
+        const rate = data[from][to];
         const converted = amount * rate;
-        result.innerText = `${amount} ${from} = ${converted.toFixed(6)} ${to}`;
+        result.innerText = `${amount} ${from} = ${converted.toFixed(2)} ${to.toUpperCase()}`;
       } catch (e) {
-        result.innerText = "Conversion failed. Try again later.";
+        result.innerText = "Conversion failed. Please try again later.";
       }
     }
   </script>
