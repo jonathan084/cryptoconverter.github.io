@@ -1,10 +1,105 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>My First GitHub Website</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CryptoConvertor</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0e0e0e;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+    }
+    h1 {
+      color: #00ffcc;
+    }
+    .converter {
+      background: #1e1e1e;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0, 255, 204, 0.2);
+      max-width: 400px;
+      width: 100%;
+    }
+    select, input {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 1rem;
+      font-size: 1rem;
+    }
+    button {
+      margin-top: 1rem;
+      padding: 0.7rem;
+      background: #00ffcc;
+      border: none;
+      font-size: 1rem;
+      cursor: pointer;
+      color: #000;
+    }
+    .result {
+      margin-top: 1.5rem;
+      font-size: 1.2rem;
+    }
+  </style>
 </head>
 <body>
-  <h1>Welcome to My Website!</h1>
-  <p>This site is hosted for free using GitHub Pages.</p>
+  <h1>CryptoConvertor</h1>
+  <div class="converter">
+    <label>Amount</label>
+    <input type="number" id="amount" placeholder="Enter amount" />
+
+    <label>From</label>
+    <select id="from">
+      <option value="BTC">Bitcoin (BTC)</option>
+      <option value="ETH">Ethereum (ETH)</option>
+      <option value="USDT">Tether (USDT)</option>
+      <option value="BNB">Binance Coin (BNB)</option>
+      <option value="SOL">Solana (SOL)</option>
+      <option value="XRP">Ripple (XRP)</option>
+    </select>
+
+    <label>To</label>
+    <select id="to">
+      <option value="USD">US Dollar (USD)</option>
+      <option value="BTC">Bitcoin (BTC)</option>
+      <option value="ETH">Ethereum (ETH)</option>
+      <option value="USDT">Tether (USDT)</option>
+      <option value="BNB">Binance Coin (BNB)</option>
+      <option value="SOL">Solana (SOL)</option>
+      <option value="XRP">Ripple (XRP)</option>
+    </select>
+
+    <button onclick="convertCrypto()">Convert</button>
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    async function convertCrypto() {
+      const amount = document.getElementById("amount").value;
+      const from = document.getElementById("from").value;
+      const to = document.getElementById("to").value;
+      const result = document.getElementById("result");
+
+      if (!amount || isNaN(amount)) {
+        result.innerText = "Please enter a valid amount.";
+        return;
+      }
+
+      try {
+        const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${from.toLowerCase()}&vs_currencies=${to.toLowerCase()}`);
+        const data = await res.json();
+        const rate = data[from.toLowerCase()][to.toLowerCase()];
+        const converted = amount * rate;
+        result.innerText = `${amount} ${from} = ${converted.toFixed(6)} ${to}`;
+      } catch (e) {
+        result.innerText = "Conversion failed. Try again later.";
+      }
+    }
+  </script>
 </body>
 </html>
